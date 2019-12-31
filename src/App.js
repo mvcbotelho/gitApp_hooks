@@ -31,10 +31,11 @@ function App() {
   };
 
   const callActions = type => {
+    setRepos([]);
+    setStarred([]);
     api.get(`${repoName}/${type}`).then(res => {
       const { data } = res;
-      type === "repos" ? setStarred([]) : setRepos([]);
-      setRepos(data);
+      type === "repos" ? setRepos(data) : setStarred(data);
     });
   };
 
