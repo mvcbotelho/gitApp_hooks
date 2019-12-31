@@ -7,10 +7,12 @@ function App() {
   const [repos, setRepos] = useState([]);
   const [starred, setStarred] = useState([]);
   const [repoName, setRepoName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const callService = e => {
     const keyCode = e.which || e.keyCode;
     if (keyCode === 13) {
+      setLoading(true);
       setRepos([]);
       setStarred([]);
       api
@@ -19,7 +21,8 @@ function App() {
           const { data } = res;
           setUserInfo(data);
         })
-        .catch(error => console.log(error));
+        .catch(error => console.log(error))
+        .finally(() => setLoading(false));
     }
   };
 
@@ -28,31 +31,22 @@ function App() {
   };
 
   const callActions = type => {
-    if (type === "repo") {
-      setStarred([]);
-      api.get(`${repoName}/repos`).then(res => {
-        const { data } = res;
-        setRepos(data);
-      });
-    }
-
-    if (type === "starred") {
-      setRepos([]);
-      api.get(`${repoName}/starred`).then(res => {
-        const { data } = res;
-        setStarred(data);
-      });
-    }
+    api.get(`${repoName}/${type}`).then(res => {
+      const { data } = res;
+      type === "repos" ? setStarred([]) : setRepos([]);
+      setRepos(data);
+    });
   };
 
   return (
     <AppContainer
+      loading={loading}
       userInfo={userInfo}
       callService={callService}
       changeRepoName={changeRepoName}
       repos={repos}
       starred={starred}
-      getRepos={() => callActions("repo")}
+      getRepos={() => callActions("repos")}
       getStarred={() => callActions("starred")}
     />
   );

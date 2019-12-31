@@ -5,6 +5,7 @@ import Search from "../Search";
 import UserInfo from "../UserInfo";
 
 const AppContainer = ({
+  loading,
   userInfo,
   callService,
   changeRepoName,
@@ -16,6 +17,13 @@ const AppContainer = ({
   return (
     <div className="container">
       <Search handleChange={changeRepoName} handleKeyUp={callService} />
+      {loading && (
+        <div className="d-flex justify-content-center mt-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      )}
       {!!userInfo && <UserInfo userInfo={userInfo} />}
       {!!userInfo && <Actions getRepos={getRepos} getStarred={getStarred} />}
       {!!repos.length && (
